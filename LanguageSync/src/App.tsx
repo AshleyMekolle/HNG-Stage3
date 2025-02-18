@@ -178,7 +178,6 @@ function App() {
     setIsProcessing(true);
 
     try {
-      // Add user message first
       const userMessage: Message = {
         id: Date.now().toString(),
         text: inputText,
@@ -188,7 +187,6 @@ function App() {
       setMessages(prev => [...prev, userMessage]);
       setInputText('');
 
-      // Detect language and send response
       const results = await detector.detect(inputText);
       const detectedLanguage = results[0]?.detectedLanguage || 'unknown';
 
@@ -218,7 +216,6 @@ function App() {
       const message = messages.find(m => m.id === messageId);
       if (!message || !message.originalText || !message.detectedLanguage) return;
 
-      // Add user translation request message
       const userRequest: Message = {
         id: Date.now().toString(),
         text: `Translate this to ${languages.find(l => l.code === targetLanguage)?.name}`,
@@ -233,8 +230,6 @@ function App() {
       }
 
       const translation = await translator.translate(message.originalText);
-      
-      // Add bot translation response
       const botResponse: Message = {
         id: (Date.now() + 1).toString(),
         text: translation,
@@ -305,7 +300,7 @@ function App() {
       <main className="container">
         <div className="header">
           <h1 className="title">
-            AI Text Processor
+            LanguageSync 🤖
             <div className="header-actions">
               <div className="theme-selector">
                 {themes.map(t => (
