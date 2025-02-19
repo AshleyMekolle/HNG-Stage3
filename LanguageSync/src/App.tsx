@@ -147,7 +147,7 @@ setMessages((prev) => [...prev, userMessage]);
 setInputText('');
 
 
-// Corrected language detection
+
 const detector = await window.ai.languageDetector.create();
 const detectionResults = await detector.detect(inputText);
 
@@ -222,48 +222,60 @@ try {
 }
 };
 
+const meetsMinimumWordCount = (text: string | undefined): boolean => {
+  if (!text) return false;
+  const wordCount = text.split(/\s+/).length;
+  return wordCount >= 150;
+};
+
+
 // Handle summarization
 const handleSummarize = async (messageId: string) => {
-setError(null);
-setIsProcessing(true);
+  setError(null);
+  setIsProcessing(true);
 
+  try {
+    const message = messages.find((m) => m.id === messageId);
+    if (!message || !message.originalText) return;
 
-try {
-  const message = messages.find((m) => m.id === messageId);
-  if (!message || !message.originalText) return;
+    // Check word count before proceeding
+    if (!meetsMinimumWordCount(message.originalText)) {
+      setError('Text must be at least 150 words for summarization.');
+      return;
+    }
 
-  // Add user request to the chat
-  const userRequest: Message = {
-    id: Date.now().toString(),
-    text: 'Summarize this text',
-    type: 'user',
-    timestamp: new Date(),
-  };
-  setMessages((prev) => [...prev, userRequest]);
+    // Add user request to the chat
+    const userRequest: Message = {
+      id: Date.now().toString(),
+      text: 'Summarize this text',
+      type: 'user',
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, userRequest]);
 
-  // Summarize the text
-  const summarizer = await window.ai.summarizer.create({
-    type: 'key-points',
-    format: 'markdown',
-    length: 'medium',
-  });
-  const summary = await summarizer.summarize(message.originalText);
+    // Summarize the text
+    const summarizer = await window.ai.summarizer.create({
+      type: 'key-points',
+      format: 'markdown',
+      length: 'medium',
+    });
+    const summary = await summarizer.summarize(message.originalText);
 
-  // Add bot response to the chat
-  const botResponse: Message = {
-    id: (Date.now() + 1).toString(),
-    text: summary,
-    type: 'bot',
-    timestamp: new Date(),
-    isSummary: true,
-  };
-  setMessages((prev) => [...prev, botResponse]);
-} catch (err) {
-  console.error('Error:', err); // Use the `err` variable
-  setError('Failed to summarize text. Please try again.');
-} finally {
-  setIsProcessing(false);
-}
+    // Add bot response to the chat
+    const botResponse: Message = {
+      id: (Date.now() + 1).toString(),
+      text: summary,
+      type: 'bot',
+      timestamp: new Date(),
+      isSummary: true,
+    };
+    setMessages((prev) => [...prev, botResponse]);
+  } catch (err) {
+    console.error('Error:', err);
+    setError('Failed to summarize text. Please try again.');
+  } finally {
+    setIsProcessing(false);
+  }
 };
 
 // Handle Enter key press
@@ -368,56 +380,57 @@ return (
 
       <div className="chat-container" role="log" aria-label="Chat messages">
         <AnimatePresence mode="popLayout">
-          {messages.map((message) => (
-            <motion.div
-              key={message.id}
-              className={`message ${message.type}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.3 }}
-              aria-label={`${message.type === 'user' ? 'Your message' : 'Response'}`}
+        {messages.map((message) => (
+      <motion.div
+        key={message.id}
+        className={`message ${message.type}`}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, x: -100 }}
+        transition={{ duration: 0.3 }}
+        aria-label={`${message.type === 'user' ? 'Your message' : 'Response'}`}
+      >
+        <p className="message-text">{message.text}</p>
+        {message.type === 'bot' && !message.isTranslation && !message.isSummary && (
+          <div className="translation-controls">
+            <select
+              value={selectedLanguage}
+              onChange={(e) => setSelectedLanguage(e.target.value)}
+              className="language-select-inline"
+              disabled={isProcessing}
+              aria-label="Select target language"
             >
-              <p className="message-text">{message.text}</p>
-              {message.type === 'bot' && !message.isTranslation && !message.isSummary && (
-                <div className="translation-controls">
-                  <select
-                    value={selectedLanguage}
-                    onChange={(e) => setSelectedLanguage(e.target.value)}
-                    className="language-select-inline"
-                    disabled={isProcessing}
-                    aria-label="Select target language"
-                  >
-                    {languages.map((lang) => (
-                      <option key={lang.code} value={lang.code}>
-                        {lang.name}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => handleTranslate(message.id, selectedLanguage)}
-                    className="action-button-inline"
-                    disabled={isProcessing || message.detectedLanguage === selectedLanguage}
-                    aria-label={`Translate to ${languages.find(lang => lang.code === selectedLanguage)?.name}`}
-                  >
-                    <Languages size={16} aria-hidden="true" />
-                    Translate
-                  </button>
-                    <button
-                      onClick={() => handleSummarize(message.id)}
-                      className="action-button-inline"
-                      disabled={isProcessing}
-                      aria-label='summarize'
-                    >
-                      Summarize
-                    </button>
-                </div>
-              )}
-              <span className="message-time" aria-label="Message time">
-                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
-            </motion.div>
-          ))}
+              {languages.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={() => handleTranslate(message.id, selectedLanguage)}
+              className="action-button-inline"
+              disabled={isProcessing || message.detectedLanguage === selectedLanguage}
+              aria-label={`Translate to ${languages.find(lang => lang.code === selectedLanguage)?.name}`}
+            >
+              <Languages size={16} aria-hidden="true" />
+              Translate
+            </button>
+            <button
+              onClick={() => handleSummarize(message.id)}
+              className="action-button-inline"
+              disabled={isProcessing || !message.originalText || !meetsMinimumWordCount(message.originalText)}
+              aria-label="Summarize"
+              title={!meetsMinimumWordCount(message.originalText) ? "Text must be at least 150 words for summarization" : ""}
+            >
+              Summarize
+            </button>
+          </div>
+        )}
+        <span className="message-time" aria-label="Message time">
+          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </span>
+      </motion.div>
+    ))}
         </AnimatePresence>
       </div>
 
