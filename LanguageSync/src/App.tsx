@@ -236,11 +236,15 @@ const handleSummarize = async (messageId: string) => {
 
   try {
     const message = messages.find((m) => m.id === messageId);
-    if (!message || !message.originalText) return;
+    if (!message || !message.originalText) {
+      setError('No text available to summarize.');
+      return;
+    }
 
-    // Check word count before proceeding
+    // Check word count and show error if too short
     if (!meetsMinimumWordCount(message.originalText)) {
       setError('Text must be at least 150 words for summarization.');
+      setIsProcessing(false);
       return;
     }
 
@@ -418,9 +422,9 @@ return (
             <button
               onClick={() => handleSummarize(message.id)}
               className="action-button-inline"
-              disabled={isProcessing || !message.originalText || !meetsMinimumWordCount(message.originalText)}
+              disabled={isProcessing || !message.originalText}
               aria-label="Summarize"
-              title={!meetsMinimumWordCount(message.originalText) ? "Text must be at least 150 words for summarization" : ""}
+              title="Summarize text"
             >
               Summarize
             </button>
