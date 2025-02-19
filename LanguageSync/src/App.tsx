@@ -326,7 +326,12 @@ return (
   <main className="container">
     <div className="header">
       <h1 className="title">
+        <div className="title-container">
         LanguageSync 🤖
+        <div className="motto">
+        Detect, Translate & Summarize
+        </div>
+        </div>
         <div className="header-actions">
           <div className="theme-selector" role="group" aria-label="Theme selection">
             {themes.map((t) => (

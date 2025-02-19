@@ -253,6 +253,28 @@ body {
   z-index: 1;
 }
 
+.title-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  margin-bottom: 5px;
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.motto {
+  text-align: center;
+  font-size: 14px;
+  color: gray;
+  font-style: italic;
+  font-weight: 200;
+}
+
 @media (min-width: 768px) {
   .container {
     padding: 2rem;
@@ -300,6 +322,12 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.header-content {
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .theme-button {
