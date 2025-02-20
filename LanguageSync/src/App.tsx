@@ -56,7 +56,7 @@ function App() {
         detectedLanguage: detectionResult.detectedLanguage,
       };
       setMessages((prev) => [...prev, botMessage]);
-      
+
     } catch (err) {
       console.error('Error:', err);
       setError('Failed to process your message. Please try again.');
@@ -210,7 +210,7 @@ return (
     <div className="header">
       <h1 className="title">
         <div className="title-container">
-        LanguageSync 🤖
+        LanguageSync 🌍
         <div className="motto">
         Detect, Translate & Summarize
         </div>
