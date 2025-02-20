@@ -1,5 +1,4 @@
-
-import { Language, Theme } from '../types/types';
+import { Language, Theme } from "../types/types";
 
 export const languages: Language[] = [
   { code: 'en', name: 'English' },
@@ -17,8 +16,8 @@ export const themes: Theme[] = [
     elements: Array.from({ length: 8 }, (_, i) => ({
       size: Math.random() * 100 + 50,
       delay: i * -2,
-      duration: Math.random() * 5 + 5,
-    })),
+      duration: Math.random() * 5 + 5
+    }))
   },
   {
     id: 'geometric',
@@ -27,8 +26,8 @@ export const themes: Theme[] = [
       size: Math.random() * 80 + 40,
       delay: i * -1.5,
       duration: Math.random() * 4 + 6,
-      shape: ['square', 'triangle', 'circle'][Math.floor(Math.random() * 3)],
-    })),
+      shape: ['square', 'triangle', 'circle'][Math.floor(Math.random() * 3)]
+    }))
   },
   {
     id: 'nature',
@@ -37,8 +36,8 @@ export const themes: Theme[] = [
       size: Math.random() * 60 + 30,
       delay: i * -2,
       duration: Math.random() * 6 + 4,
-      rotation: Math.random() * 360,
-    })),
+      rotation: Math.random() * 360
+    }))
   },
   {
     id: 'space',
@@ -47,8 +46,8 @@ export const themes: Theme[] = [
       size: Math.random() * 40 + 20,
       delay: i * -1,
       duration: Math.random() * 8 + 6,
-      opacity: Math.random() * 0.5 + 0.2,
-    })),
+      opacity: Math.random() * 0.5 + 0.2
+    }))
   },
   {
     id: 'minimal',
@@ -57,7 +56,8 @@ export const themes: Theme[] = [
       size: Math.random() * 120 + 60,
       delay: i * -3,
       duration: Math.random() * 7 + 7,
-      opacity: 0.05,
-    })),
-  },
+      opacity: 0.05
+    }))
+  }
 ];
+

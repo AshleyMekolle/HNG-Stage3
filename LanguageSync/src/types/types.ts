@@ -1,5 +1,4 @@
-// types.ts
-export interface Message {
+export type Message = {
   id: string;
   text: string;
   type: 'user' | 'bot';
@@ -7,37 +6,29 @@ export interface Message {
   originalText?: string;
   detectedLanguage?: string;
   isTranslation?: boolean;
-  translatedText?: string;
-}
+  isSummary?: boolean;
+};
 
-export interface Language {
+export type Language = {
   code: string;
   name: string;
-}
+};
 
-export interface Theme {
+export type Theme = {
   id: string;
   name: string;
-  elements: ThemeElement[];
-}
+  elements: {
+    size: number;
+    delay: number;
+    duration: number;
+    shape?: string;
+    rotation?: number;
+    opacity?: number;
+  }[];
+};
 
-export interface ThemeElement {
-  size: number;
-  delay: number;
-  duration: number;
-  shape?: string;
-  rotation?: number;
-  opacity?: number;
-}
-
-export interface LanguageDetector {
-  detect(text: string): Promise<{ detectedLanguage: string }[]>;
-}
-
-export interface DownloadProgressEvent extends Event {
-  loaded: number;
-  total: number;
-}
-export interface LanguageDetectorResult {
+export type DetectionResult = {
   detectedLanguage: string;
-}
+  confidence?: number;
+};
+
